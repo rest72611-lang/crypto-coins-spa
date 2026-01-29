@@ -1,0 +1,74 @@
+.MaxCoinsBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* הכי חשוב */
+  z-index: 999999;
+}
+
+.MaxCoinsCard {
+  width: min(760px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.MaxCoinsTitle {
+  text-align: center;
+  font-weight: 800;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.MaxCoinsText {
+  text-align: center;
+  color: #555;
+  margin-bottom: 18px;
+}
+
+.MaxCoinsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.MaxCoinsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.MaxCoinsActions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.MaxBtn {
+  min-width: 120px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+.MaxBtnConfirm { background: #3498db; }
+.MaxBtnClose { background: #e74c3c; }
+
+.MaxBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+

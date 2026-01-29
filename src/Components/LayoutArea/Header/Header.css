@@ -1,0 +1,42 @@
+.Header {
+  height: 260px;
+  position: relative;
+  overflow: hidden;
+
+  background-image: url("../../../assets/crypto-header.avif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Parallax effect */
+  background-attachment: fixed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark overlay above image */
+.HeaderOverlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0 16px;
+}
+
+/* Title styling */
+.HeaderOverlay h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.75);
+}

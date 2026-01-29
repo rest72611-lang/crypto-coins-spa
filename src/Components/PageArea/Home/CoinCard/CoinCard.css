@@ -1,0 +1,125 @@
+.CoinCard {
+  width: 360px;
+  background: #fff;
+  border: 2px solid #f3c36c;
+  border-radius: 14px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.CoinHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.CoinLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.CoinIcon {
+  width: 44px;
+  height: 44px;
+}
+
+.CoinText {
+  display: flex;
+  flex-direction: column;
+}
+
+.CoinSymbol {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.CoinName {
+  font-size: 15px;
+  color: #666;
+}
+
+/* ===== SWITCH ===== */
+
+.CoinSwitch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+}
+
+.CoinSwitchInput {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.CoinSwitchSlider {
+  position: absolute;
+  inset: 0;
+  background: #e6e6e6;
+  border-radius: 999px;
+  pointer-events: none;
+  transition: 0.25s;
+}
+
+.CoinSwitchSlider::before {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.CoinSwitchInput:checked + .CoinSwitchSlider {
+  background: #f4b21a;
+}
+
+.CoinSwitchInput:checked + .CoinSwitchSlider::before {
+  transform: translateX(24px);
+}
+
+/* ===== MORE INFO ===== */
+
+.MoreInfoBtn {
+  margin-top: 14px;
+  width: 100%;
+  height: 44px;
+  background: #f4b21a;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.MoreInfoBox {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff7e3;
+  border: 1px solid #f3c36c;
+}
+
+.MoreInfoRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+}
+
+
+
+
+
+
+
+
+
+
+

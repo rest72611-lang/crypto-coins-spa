@@ -1,0 +1,44 @@
+.Reports {
+  padding: 18px;
+}
+
+.ReportsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ReportsHeader h2 {
+  margin: 0;
+}
+
+.ReportsMeta {
+  color: #444;
+}
+
+.ReportsMsg {
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.ReportsError {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ffb3b3;
+  background: #fff2f2;
+}
+
+.ReportsChartWrap {
+  margin-top: 14px;
+  border: 2px solid #f3c36c;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+

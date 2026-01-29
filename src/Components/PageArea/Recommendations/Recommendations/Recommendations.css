@@ -1,0 +1,51 @@
+.Recommendations {
+  padding: 20px;
+}
+
+.box {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.radios {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radioRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.askBtn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 0;
+  cursor: pointer;
+}
+
+.askBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 10px;
+  color: #b00020;
+}
+
+.aiResult table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.aiResult th, .aiResult td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
