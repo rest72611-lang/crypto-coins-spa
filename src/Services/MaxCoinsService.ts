@@ -5,9 +5,9 @@ import { MaxCoinsOption1 } from "../Components/Models/MaxCoinsOption1";
 // and providing helper utilities for replacement logic
 class MaxCoinsService {
 
-  // Returns true if another coin can be added
-  // (maximum allowed is 5)
+  // Returns true if another coin can be added (maximum allowed is 5)
   public canAdd(selectedIds: string[]): boolean {
+    if (!Array.isArray(selectedIds)) return true; // guard against bad runtime data
     return selectedIds.length < 5;
   }
 
@@ -18,20 +18,18 @@ class MaxCoinsService {
     selectedIds: string[]
   ): MaxCoinsOption1[] {
 
+    // Guards: prevent "map is not a function"
+    if (!Array.isArray(allCoins) || !Array.isArray(selectedIds)) return [];
+
     // Create lookup map for fast id -> coin access
-    const map = new Map(allCoins.map(c => [c.id, c]));
+    const map = new Map(allCoins.map(c => [c.id, c] as const));
 
     return selectedIds
-      // Convert id to coin object
       .map(id => map.get(id))
-
-      // Remove undefined results
-      .filter(Boolean)
-
-      // Map to lightweight option model
+      .filter((c): c is CoinCardModel => !!c)
       .map(c => ({
-        id: c!.id,
-        symbol: c!.symbol
+        id: c.id,
+        symbol: c.symbol
       }));
   }
 
@@ -43,6 +41,8 @@ class MaxCoinsService {
     removeId: string,
     addId: string
   ): string[] {
+
+    if (!Array.isArray(selectedIds)) return addId ? [addId] : [];
 
     // Remove the selected coin
     const without = selectedIds.filter(id => id !== removeId);
