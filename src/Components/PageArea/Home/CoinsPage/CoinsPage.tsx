@@ -19,59 +19,59 @@ type LayoutContext = { search: string };
 
 export function CoinsPage(): ReactElement {
 
+  // Read search value from Layout (via Outlet context)
   const { search } = useOutletContext<LayoutContext>();
+
   const dispatch = useDispatch();
 
-  // Raw Redux values
+  // Read data from Redux
   const coinsRaw = useSelector((state: RootState) => state.coins.coins);
   const selectedIdsRaw = useSelector((state: RootState) => state.coins.selectedIds);
 
-  // ✅ Guards
+  // Guards - always work with arrays
   const coins = Array.isArray(coinsRaw) ? coinsRaw : [];
   const selectedIds = Array.isArray(selectedIdsRaw) ? selectedIdsRaw : [];
 
+  // Local UI state
   const [pendingId, setPendingId] = useState<string>("");
   const [isMaxOpen, setIsMaxOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // =============================
+  // =====================================
   // Load coins from API
-  // =============================
+  // =====================================
   useEffect(() => {
     setIsLoading(true);
 
     coinCardsService
       .getAllCards()
-      .then((data) => {
-        console.log("coins from api:", data);   // 👈 מינימלי לדיבוג
-        dispatch(coinsActions.setCoins(data));
-      })
-      .catch((err) => notify.error(err))
+      .then(data => dispatch(coinsActions.setCoins(data)))
+      .catch(err => notify.error(err))
       .finally(() => setIsLoading(false));
 
   }, [dispatch]);
 
-  // =============================
-  // Load selectedIds from storage
-  // =============================
+  // =====================================
+  // Load selected coin ids from LocalStorage
+  // =====================================
   useEffect(() => {
     const ids = coinCardsService.getSelectedIds().slice(0, 5);
     dispatch(coinsActions.setSelectedIds(ids));
     setHydrated(true);
   }, [dispatch]);
 
-  // =============================
-  // Save selectedIds to storage
-  // =============================
+  // =====================================
+  // Save selected ids to LocalStorage
+  // =====================================
   useEffect(() => {
     if (!hydrated) return;
     coinCardsService.saveSelectedIds(selectedIds.slice(0, 5));
   }, [selectedIds, hydrated]);
 
-  // =============================
-  // Filter by search
-  // =============================
+  // =====================================
+  // Filter coins by search text
+  // =====================================
   const filteredCoins = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return coins;
@@ -83,16 +83,16 @@ export function CoinsPage(): ReactElement {
     );
   }, [coins, search]);
 
-  // =============================
-  // Modal options
-  // =============================
+  // =====================================
+  // Build modal options
+  // =====================================
   const modalOptions = useMemo(() => {
     return maxCoinsService.buildOptions(coins, selectedIds);
   }, [coins, selectedIds]);
 
-  // =============================
-  // Pending symbol
-  // =============================
+  // =====================================
+  // Pending coin symbol (safe)
+  // =====================================
   const pendingSymbol = useMemo(() => {
     const id = pendingId ?? "";
     if (!id) return "";
@@ -100,9 +100,9 @@ export function CoinsPage(): ReactElement {
     return String(found?.symbol ?? id).toUpperCase();
   }, [coins, pendingId]);
 
-  // =============================
-  // Toggle handler
-  // =============================
+  // =====================================
+  // Toggle coin selection
+  // =====================================
   function handleToggle(coinId: string, checked: boolean): void {
 
     if (!checked) {
@@ -123,9 +123,9 @@ export function CoinsPage(): ReactElement {
     notify.coinAdded();
   }
 
-  // =============================
-  // Replace coin
-  // =============================
+  // =====================================
+  // Replace selected coin
+  // =====================================
   function replaceCoin(removeId: string): void {
 
     const next = maxCoinsService
@@ -145,9 +145,9 @@ export function CoinsPage(): ReactElement {
     setPendingId("");
   }
 
-  // =============================
+  // =====================================
   // Render
-  // =============================
+  // =====================================
   return (
     <div className="CoinsPage">
 
@@ -172,6 +172,7 @@ export function CoinsPage(): ReactElement {
     </div>
   );
 }
+
 
 
 
