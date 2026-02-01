@@ -18,15 +18,15 @@ import { MaxCoins } from "../../../SharedArea/MaxCoins/MaxCoins";
 type LayoutContext = { search: string };
 
 export function CoinsPage(): ReactElement {
-  const { search } = useOutletContext<LayoutContext>();
 
+  const { search } = useOutletContext<LayoutContext>();
   const dispatch = useDispatch();
 
-  // raw from redux
+  // Raw Redux values
   const coinsRaw = useSelector((state: RootState) => state.coins.coins);
   const selectedIdsRaw = useSelector((state: RootState) => state.coins.selectedIds);
 
-  // ✅ SAFE guards (prevent "map is not a function")
+  // ✅ Guards
   const coins = Array.isArray(coinsRaw) ? coinsRaw : [];
   const selectedIds = Array.isArray(selectedIdsRaw) ? selectedIdsRaw : [];
 
@@ -35,54 +35,76 @@ export function CoinsPage(): ReactElement {
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Load coins from API → store in Redux
+  // =============================
+  // Load coins from API
+  // =============================
   useEffect(() => {
     setIsLoading(true);
 
     coinCardsService
       .getAllCards()
-      .then((data) => dispatch(coinsActions.setCoins(data)))
+      .then((data) => {
+        console.log("coins from api:", data);   // 👈 מינימלי לדיבוג
+        dispatch(coinsActions.setCoins(data));
+      })
       .catch((err) => notify.error(err))
       .finally(() => setIsLoading(false));
+
   }, [dispatch]);
 
-  // Hydrate selectedIds from LocalStorage → Redux (once)
+  // =============================
+  // Load selectedIds from storage
+  // =============================
   useEffect(() => {
     const ids = coinCardsService.getSelectedIds().slice(0, 5);
     dispatch(coinsActions.setSelectedIds(ids));
     setHydrated(true);
   }, [dispatch]);
 
-  // Persist selectedIds from Redux → LocalStorage (only after hydration)
+  // =============================
+  // Save selectedIds to storage
+  // =============================
   useEffect(() => {
     if (!hydrated) return;
     coinCardsService.saveSelectedIds(selectedIds.slice(0, 5));
   }, [selectedIds, hydrated]);
 
-  // Filter coins based on search query (memoized)
+  // =============================
+  // Filter by search
+  // =============================
   const filteredCoins = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return coins;
 
     return coins.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q)
+      c =>
+        c.name.toLowerCase().includes(q) ||
+        c.symbol.toLowerCase().includes(q)
     );
   }, [coins, search]);
 
-  // Compute modal options
+  // =============================
+  // Modal options
+  // =============================
   const modalOptions = useMemo(() => {
     return maxCoinsService.buildOptions(coins, selectedIds);
   }, [coins, selectedIds]);
 
-  // ✅ Compute pending coin symbol safely
+  // =============================
+  // Pending symbol
+  // =============================
   const pendingSymbol = useMemo(() => {
     const id = pendingId ?? "";
     if (!id) return "";
-    const found = coins.find((c) => c.id === id);
+    const found = coins.find(c => c.id === id);
     return String(found?.symbol ?? id).toUpperCase();
   }, [coins, pendingId]);
 
+  // =============================
+  // Toggle handler
+  // =============================
   function handleToggle(coinId: string, checked: boolean): void {
+
     if (!checked) {
       dispatch(coinsActions.removeSelectedId(coinId));
       notify.coinRemoved();
@@ -101,8 +123,15 @@ export function CoinsPage(): ReactElement {
     notify.coinAdded();
   }
 
+  // =============================
+  // Replace coin
+  // =============================
   function replaceCoin(removeId: string): void {
-    const next = maxCoinsService.replace(selectedIds, removeId, pendingId).slice(0, 5);
+
+    const next = maxCoinsService
+      .replace(selectedIds, removeId, pendingId)
+      .slice(0, 5);
+
     dispatch(coinsActions.setSelectedIds(next));
 
     notify.coinRemoved();
@@ -116,12 +145,20 @@ export function CoinsPage(): ReactElement {
     setPendingId("");
   }
 
+  // =============================
+  // Render
+  // =============================
   return (
     <div className="CoinsPage">
+
       {isLoading ? (
         <Spinner />
       ) : (
-        <CoinsList coins={filteredCoins} selectedIds={selectedIds} onToggle={handleToggle} />
+        <CoinsList
+          coins={filteredCoins}
+          selectedIds={selectedIds}
+          onToggle={handleToggle}
+        />
       )}
 
       <MaxCoins
@@ -131,9 +168,11 @@ export function CoinsPage(): ReactElement {
         onConfirm={replaceCoin}
         onClose={closeModal}
       />
+
     </div>
   );
 }
+
 
 
 
