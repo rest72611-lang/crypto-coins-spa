@@ -70,6 +70,6 @@ export default defineConfig([
     },
   },
 ])
-Git Hub:https://github.com/rest72611-lang/crypto-coins-spa.git;
-Cloud:
+Git Hub:https://github.com/rest72611-lang/crypto-coins-spa.git
+Cloud:https://f3658530.crypto-coins-spa.pages.dev/home
 ```
