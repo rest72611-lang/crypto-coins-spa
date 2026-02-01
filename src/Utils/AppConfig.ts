@@ -9,8 +9,9 @@ export class AppConfig {
   // =========================
 
   // Coins list for Home page
+  // Returns ~100 coins ordered by market cap
   public readonly CoinCardUrl =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd";
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1";
 
   // Single coin details (used for AI recommendations)
   // Usage: `${CoinGeckoCoinUrl}/${coinId}?market_data=true`
@@ -45,6 +46,7 @@ export class AppConfig {
 
 // Singleton instance
 export const appConfig = new AppConfig();
+
 
 
 
