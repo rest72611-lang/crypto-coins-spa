@@ -11,7 +11,6 @@ import { CoinsList } from "../CoinsList/CoinsList";
 
 import "./CoinsPage.css";
 
-
 import { notify } from "../../../../Utils/Notify";
 import { Spinner } from "../../../SharedArea/spinner/spinner";
 import { MaxCoins } from "../../../SharedArea/MaxCoins/MaxCoins";
@@ -19,26 +18,21 @@ import { MaxCoins } from "../../../SharedArea/MaxCoins/MaxCoins";
 type LayoutContext = { search: string };
 
 export function CoinsPage(): ReactElement {
-  // Read shared layout context (search value) from React Router Outlet
   const { search } = useOutletContext<LayoutContext>();
 
-  // Redux dispatch
   const dispatch = useDispatch();
 
-  // Redux state selectors
-  const coins = useSelector((state: RootState) => state.coins.coins);
-  const selectedIds = useSelector((state: RootState) => state.coins.selectedIds);
+  // raw from redux
+  const coinsRaw = useSelector((state: RootState) => state.coins.coins);
+  const selectedIdsRaw = useSelector((state: RootState) => state.coins.selectedIds);
 
-  // UI state: pending coin to add when max-selection is reached
+  // ✅ SAFE guards (prevent "map is not a function")
+  const coins = Array.isArray(coinsRaw) ? coinsRaw : [];
+  const selectedIds = Array.isArray(selectedIdsRaw) ? selectedIdsRaw : [];
+
   const [pendingId, setPendingId] = useState<string>("");
-
-  // UI state: modal open/close
   const [isMaxOpen, setIsMaxOpen] = useState<boolean>(false);
-
-  // Hydration guard to avoid persisting before initial LocalStorage load
   const [hydrated, setHydrated] = useState<boolean>(false);
-
-  // Page loading indicator (used to show Spinner while fetching initial data)
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Load coins from API → store in Redux
@@ -65,7 +59,7 @@ export function CoinsPage(): ReactElement {
     coinCardsService.saveSelectedIds(selectedIds.slice(0, 5));
   }, [selectedIds, hydrated]);
 
-  // Filter coins based on search query (memoized for performance)
+  // Filter coins based on search query (memoized)
   const filteredCoins = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return coins;
@@ -75,55 +69,48 @@ export function CoinsPage(): ReactElement {
     );
   }, [coins, search]);
 
-  // Compute modal options (id + symbol) from the current selection
+  // Compute modal options
   const modalOptions = useMemo(() => {
     return maxCoinsService.buildOptions(coins, selectedIds);
   }, [coins, selectedIds]);
 
-  // Compute pending coin symbol for modal display
+  // ✅ Compute pending coin symbol safely
   const pendingSymbol = useMemo(() => {
-    if (!pendingId) return "";
-    const found = coins.find((c) => c.id === pendingId);
-    return (found?.symbol ?? pendingId).toUpperCase();
+    const id = pendingId ?? "";
+    if (!id) return "";
+    const found = coins.find((c) => c.id === id);
+    return String(found?.symbol ?? id).toUpperCase();
   }, [coins, pendingId]);
 
-  // Handle toggle selection from child cards
   function handleToggle(coinId: string, checked: boolean): void {
-    // Unselect flow
     if (!checked) {
       dispatch(coinsActions.removeSelectedId(coinId));
       notify.coinRemoved();
       return;
     }
 
-    // Ignore duplicates
     if (selectedIds.includes(coinId)) return;
 
-    // Enforce max 5 selections by opening modal
     if (!maxCoinsService.canAdd(selectedIds)) {
       setPendingId(coinId);
       setIsMaxOpen(true);
       return;
     }
 
-    // Select flow
     dispatch(coinsActions.addSelectedId(coinId));
     notify.coinAdded();
   }
 
-  // Replace a selected coin with the pending one (modal confirm action)
   function replaceCoin(removeId: string): void {
     const next = maxCoinsService.replace(selectedIds, removeId, pendingId).slice(0, 5);
     dispatch(coinsActions.setSelectedIds(next));
 
-    // Optional notifications (kept consistent with your existing UX)
     notify.coinRemoved();
     notify.coinAdded();
 
     closeModal();
   }
 
-  // Close modal and reset pending selection
   function closeModal(): void {
     setIsMaxOpen(false);
     setPendingId("");
@@ -131,14 +118,12 @@ export function CoinsPage(): ReactElement {
 
   return (
     <div className="CoinsPage">
-      {/* Show spinner while the page is loading initial coins data */}
       {isLoading ? (
         <Spinner />
       ) : (
         <CoinsList coins={filteredCoins} selectedIds={selectedIds} onToggle={handleToggle} />
       )}
 
-      {/* Max-selection modal extracted to dedicated component (no duplicated JSX in this page) */}
       <MaxCoins
         isOpen={isMaxOpen}
         pendingSymbol={pendingSymbol}
@@ -149,7 +134,6 @@ export function CoinsPage(): ReactElement {
     </div>
   );
 }
-
 
 
 
